@@ -90,11 +90,11 @@ function drawGame(map){
           }
 
           if(x == selectedTileX && y == selectedTileY && top){
-            drawPlayer(saveCTX, player.x, player.y, i, player.sprite.render, player.width, player.height);
+            drawPlayer(player.x, player.y, i, player.sprite.render, player.width, player.height);
           }
 
           if(map[currentPos][i].sprite){
-            drawSprite(saveCTX, x, y, map[currentPos][i].sprite, 10, 20);
+            drawSprite(x, y, map[currentPos][i].sprite, 10, 20);
           }
         }
       }
@@ -136,15 +136,14 @@ function drawTile(x, y, color, layer){
     for(var x = offX; x < offX + tileW; ++x){
 
       if(tileSprite[k]){
-        thisCTX.fillStyle = color[tileSprite[k]];
-        thisCTX.fillRect(x, y, 1, 1);
+        writeToExport(x, y, color[tileSprite[k]]);
       }
       k++;
     }
   }
 }
 
-function drawSprite(thisCTX, posX, posY, thisSprite, sizeX, sizeY){
+function drawSprite(posX, posY, thisSprite, sizeX, sizeY){
   var offX = (((posX * tileW) / 2) + ((posY * tileW) / 2) + originX) + (tileW / 2) - (sizeX / 2);
   var offY = (((posY * tileH) / 2) - ((posX * tileH) / 2) + originY) - (sizeY) + (tileH / 2);
 
@@ -153,15 +152,14 @@ function drawSprite(thisCTX, posX, posY, thisSprite, sizeX, sizeY){
     for(var x = offX; x < offX + sizeX; ++x){
 
       if(thisSprite[k]){
-        thisCTX.fillStyle = thisSprite[k];
-        thisCTX.fillRect(x, y, 1, 1);
+        writeToExport(x, y, thisSprite[k]);
       }
       k++;
     }
   }
 }
 
-function drawPlayer(thisCTX, posX, posY, layerCoord, thisSprite, sizeX, sizeY){
+function drawPlayer(posX, posY, layerCoord, thisSprite, sizeX, sizeY){
 
   // NO DELETE. Need this to convert tile coords to pixel coords
   // var offX = (((posX * tileW) / 2) + ((posY * tileW) / 2) + originX) + (tileW / 2) - (sizeX / 2) + speedX;
@@ -172,16 +170,14 @@ function drawPlayer(thisCTX, posX, posY, layerCoord, thisSprite, sizeX, sizeY){
   var offX = posX + speedX;
   var offY = posY + speedY;
 
-  thisCTX.fillStyle = '#FFF';
-  thisCTX.fillRect(offX, offY, 1, 1);
+  writeToExport(offX, offY, '#FFF');
 
   var k = 0;
   for(var y = offY; y < offY + sizeY; ++y){
     for(var x = offX; x < offX + sizeX; ++x){
 
       if(thisSprite[k]){
-        thisCTX.fillStyle = thisSprite[k];
-        thisCTX.fillRect(x, y, 1, 1);
+        writeToExport(x, y, thisSprite[k]);
       }
       k++;
     }
@@ -316,4 +312,9 @@ function tileToCoords(x, y){
   var offY = (((y * tileH) / 2) - ((x * tileH) / 2) + originY) + (tileH / 2);
 
   return {x: offX, y: offY};
+}
+
+function writeToExport(x, y, color){
+  const gamePixelWidth = 200;
+  gameExport[(y * gamePixelWidth) + x] = color;
 }
