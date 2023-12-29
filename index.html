@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>AssemblyScript 2D</title>
+    <style>
+      body {
+        background-color: #93907F;
+      }
+      .container {
+        margin: 40px auto;
+        max-width: 552px;
+      }
+      .screen {
+        border: 20px solid #2C2D3E;
+        border-radius: 8px;
+      }
+      canvas {
+        margin-bottom: 15px;
+        width: 512px;
+        height: 512px;
+        image-rendering: -moz-crisp-edges;
+        image-rendering: -webkit-crisp-edges;
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+        background-color: #222;
+      }
+      h1 {
+        font-family: 'Lucida Console', Courier, monospace;
+        font-size: 32px;
+        font-weight: 200;
+        color: #01021F;
+        text-transform: uppercase;
+        letter-spacing: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="container">
+      <canvas id="canvas" class="screen"></canvas>
+      <h1>Game Site</h1>
+    </section>
+    <script src="index.js"></script>
+  </body>
+</html>
