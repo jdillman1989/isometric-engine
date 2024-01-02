@@ -88,8 +88,10 @@ function drawGame(map) {
   for (let y = 0; y < canvas.height; ++y) {
     for (let x = 0; x < canvas.width; ++x) {
       const currentPos = y * canvas.width + x;
-      ctx.fillStyle = map[currentPos];
-      ctx.fillRect(x, y, 1, 1);
+      if (map[currentPos]) {
+        ctx.fillStyle = map[currentPos];
+        ctx.fillRect(x, y, 1, 1);
+      }
     }
   }
 }

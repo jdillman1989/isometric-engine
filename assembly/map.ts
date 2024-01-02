@@ -1,11 +1,30 @@
-var tiles = {
+interface RGBInterface = {
+  r: u32;
+  g: u32;
+  b: u32;
+}
+
+interface TileInterface = {
+  [name: string]: RGBInterface;
+}
+
+var tiles: TileInterface = {
   grass: { r: 125, g: 196, b: 143 },
   water: { r: 86, g: 75, b: 100 },
   rock: { r: 188, g: 167, b: 82 },
   lava: { r: 209, g: 105, b: 42 }
 };
 
-var map = [
+interface MapDataInterface {
+  tile: RGBInterface;
+  sprite: u16;
+}
+
+type MapSlotInterface = u16 | MapDataInterface;
+
+export type MapInterface = MapSlotInterface[][];
+
+var map: MapInterface = [
   //////////////////////
   // Row 1 (top left) //
   //////////////////////

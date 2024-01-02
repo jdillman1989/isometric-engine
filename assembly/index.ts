@@ -1,4 +1,4 @@
-import map from "./map";
+import map, { MapInterface } from "./map";
 
 type Pixel = u8 | string;
 var gameExport: Pixel[] = [];
@@ -75,7 +75,7 @@ interface ColorInterface {
   cool: string;
 }
 
-function drawGame(map) {
+function drawGame(map: MapInterface) {
   tileIndex = 0;
 
   var layer: f32 = originY;
@@ -252,7 +252,7 @@ interface ColorSetCalcInterface {
   warm: RGBCalcInterface;
 }
 
-function startGame() {
+export function startGame() {
   var selectedTiles: TileCoordsInterface = coordsToTile(player.x + player.sprite.originX, player.y + player.sprite.originY);
 
   selectedTileX = selectedTiles.x;
@@ -281,6 +281,9 @@ function startGame() {
   }
 
   drawGame(map);
+
+  // send game export to JS side
+  store<Pixel[]>(gameExport);
 };
 
 function animateMove() {
