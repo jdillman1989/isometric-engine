@@ -227,6 +227,12 @@ interface TileCoordsInterface {
 }
 
 interface RGBInterface {
+  r: u32;
+  g: u32;
+  b: u32;
+}
+
+interface RGBCalcInterface {
   r: f32;
   g: f32;
   b: f32;
@@ -237,6 +243,13 @@ interface ColorSetInterface {
   layers: RGBInterface[];
   cool: RGBInterface;
   warm: RGBInterface;
+}
+
+interface ColorSetCalcInterface {
+  base: RGBCalcInterface;
+  layers: RGBCalcInterface[];
+  cool: RGBCalcInterface;
+  warm: RGBCalcInterface;
 }
 
 function startGame() {
@@ -299,12 +312,12 @@ function toColor(colorObj: RGBInterface): string {
   return 'rgb(' + colorValLimit(colorObj.r) + ',' + colorValLimit(colorObj.g) + ',' + colorValLimit(colorObj.b) + ')';
 }
 
-function colorValLimit(color: u32): u32 {
-  if(color >= 255){
+function colorValLimit(color: i32): u32 {
+  if (color >= 255) {
     color = 255;
   }
 
-  if(color <= 0){
+  if (color <= 0) {
     color = 0;
   }
 
@@ -312,22 +325,22 @@ function colorValLimit(color: u32): u32 {
 }
 
 function colorSet(color: RGBInterface): ColorSetInterface {
-  var colorCool = {
+  var colorCool: RGBCalcInterface = {
     r:color.r - 90,
     g:color.g - 20,
     b:color.b - 10,
   };
 
-  var colorWarm = {
+  var colorWarm: RGBCalcInterface = {
     r:color.r - 10,
     g:color.g - 20,
     b:color.b - 90,
   };
 
   maxHeight = map[0].length;
-  var layerColors = [];
+  var layerColors: RGBCalcInterface[] = [];
 
-  for(var i = 0; i < maxHeight; ++i){
+  for(var i: u32 = 0; i < maxHeight; ++i){
     layerColors.push({
       r:color.r + (15 * i),
       g:color.g + (15 * i),
@@ -335,7 +348,7 @@ function colorSet(color: RGBInterface): ColorSetInterface {
     });
   }
 
-  var colorObj = {
+  var colorObj: ColorSetCalcInterface = {
     base: color,
     layers: layerColors,
     cool: colorCool,
