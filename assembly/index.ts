@@ -1,27 +1,34 @@
 import map from "./map";
 
-var gameExport = [];
+type Pixel = u8 | string;
+var gameExport: Pixel[] = [];
 
 for (var i = 0; i <= 40000; ++i) {
   gameExport.push(0);
 }
 
 // Static Globals
-var tileW = 20,
-    tileH = tileW / 2,
-    mapW = 10,
-    mapH = 10,
-    originX = 0.5,
-    originY = 72.5,
-    layerDepth = 5;
+var tileW: u32 = 20,
+    tileH: u32 = tileW / 2,
+    mapW: u32 = 10,
+    mapH: u32 = 10,
+    originX: f32 = 0.5,
+    originY: f32 = 72.5,
+    layerDepth: u32 = 5;
 
-var tileIndex = 0;
+var tileIndex: u32 = 0;
 
-var r = '#F00';
-var d = '#B00';
-var b = '#0B1';
+var r: string = '#F00';
+var d: string = '#B00';
+var b: string = '#0B1';
 
-var playerSprite = {
+interface PlayerSpriteInterface {
+  originX: f32;
+  originY: f32;
+  render: Pixel[];
+}
+
+var playerSprite: PlayerSpriteInterface = {
   originX: 5,
   originY: 14,
   render: [
@@ -45,30 +52,45 @@ var playerSprite = {
     0,0,0,0,0,0,0,0,0,0
   ]
 };
-var player = {x:90, y:53, width: 10, height: 18, sprite: playerSprite};
 
-var speedX = 0,
-    speedY = 0;
+interface PlayerInterface {
+  x: u32;
+  y: u32;
+  width: u32;
+  height: u32;
+  sprite: PlayerSpriteInterface;
+}
 
-var selectedTileX = 0,
-    selectedTileY = 0;
+var player: PlayerInterface = {x:90, y:53, width: 10, height: 18, sprite: playerSprite};
 
-function drawGame(map){
+var speedX: u32 = 0,
+    speedY: u32 = 0;
+
+var selectedTileX: u32 = 0,
+    selectedTileY: u32 = 0;
+
+interface ColorInterface {
+  base: string;
+  warm: string;
+  cool: string;
+}
+
+function drawGame(map) {
   tileIndex = 0;
 
-  var layer = originY;
+  var layer: f32 = originY;
 
-  maxHeight = map[0].length;
+  var maxHeight: u32 = map[0].length;
 
-  for(var i = 0; i < maxHeight; ++i){
+  for (var i: u32 = 0; i < maxHeight; ++i) {
 
-    for(var x = (mapW - 1); x >= 0; x--) {
-      for(var y = 0; y < mapH; y++) {
+    for (var x: u32 = (mapW - 1); x >= 0; x--) {
+      for (var y: u32 = 0; y < mapH; y++) {
 
-        var currentPos = ((y*mapW)+x);
-        var color = {base:'',warm:'',cool:''};
+        var currentPos: u32 = ((y*mapW)+x);
+        var color: ColorInterface = { base:'', warm:'', cool:'' };
 
-        if(map[currentPos][i]){
+        if (map[currentPos][i]) {
 
           color.base = map[currentPos][i].tile.base;
           color.warm = map[currentPos][i].tile.warm;
@@ -82,8 +104,8 @@ function drawGame(map){
           tileIndex++;
 
           // When to draw player in tile order? How to make sure player is on top tile layer?
-          var top = true;
-          for(var k = i + 1; k < maxHeight; ++k){
+          var top: bool = true;
+          for(var k: u32 = i + 1; k < maxHeight; ++k){
             if(map[currentPos][k]){
               top = false;
             }
@@ -105,11 +127,11 @@ function drawGame(map){
   }
 }
 
-var T = "base",
-    L = "warm",
-    R = "cool";
+var T: string = "base",
+    L: string = "warm",
+    R: string = "cool";
 
-var tileSprite = [
+var tileSprite: Pixel[] = [
   0, 0, 0, 0, 0, 0, 0, 0, 0, T, T, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   0, 0, 0, 0, 0, 0, 0, T, T, T, T, T, T, 0, 0, 0, 0, 0, 0, 0,
   0, 0, 0, 0, 0, T, T, T, T, T, T, T, T, T, T, 0, 0, 0, 0, 0,
@@ -127,7 +149,7 @@ var tileSprite = [
   0, 0, 0, 0, 0, 0, 0, 0, 0, L, R, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ]
 
-function drawTile(x, y, color, layer){
+function drawTile(x: f32, y: f32, color: string, layer: u32) {
   var offX = ((x * tileW) / 2) + ((y * tileW) / 2) + originX;
   var offY = ((y * tileH) / 2) - ((x * tileH) / 2) + layer;
 
@@ -143,13 +165,19 @@ function drawTile(x, y, color, layer){
   }
 }
 
-function drawSprite(posX, posY, thisSprite, sizeX, sizeY){
-  var offX = (((posX * tileW) / 2) + ((posY * tileW) / 2) + originX) + (tileW / 2) - (sizeX / 2);
-  var offY = (((posY * tileH) / 2) - ((posX * tileH) / 2) + originY) - (sizeY) + (tileH / 2);
+function drawSprite(
+  posX: f32,
+  posY: f32,
+  thisSprite: Pixel[],
+  sizeX: u32,
+  sizeY: u32
+) {
+  var offX: u32 = (((posX * tileW) / 2) + ((posY * tileW) / 2) + originX) + (tileW / 2) - (sizeX / 2);
+  var offY: u32 = (((posY * tileH) / 2) - ((posX * tileH) / 2) + originY) - (sizeY) + (tileH / 2);
 
-  var k = 0;
-  for(var y = offY; y < offY + sizeY; ++y){
-    for(var x = offX; x < offX + sizeX; ++x){
+  var k: u32 = 0;
+  for(var y: u32 = offY; y < offY + sizeY; ++y){
+    for(var x: u32 = offX; x < offX + sizeX; ++x){
 
       if(thisSprite[k]){
         writeToExport(x, y, thisSprite[k]);
@@ -159,24 +187,30 @@ function drawSprite(posX, posY, thisSprite, sizeX, sizeY){
   }
 }
 
-function drawPlayer(posX, posY, layerCoord, thisSprite, sizeX, sizeY){
-
+function drawPlayer(
+  posX: f32,
+  posY: f32,
+  layerCoord: u32,
+  thisSprite: Pixel[],
+  sizeX: u32,
+  sizeY: u3
+) {
   // NO DELETE. Need this to convert tile coords to pixel coords
   // var offX = (((posX * tileW) / 2) + ((posY * tileW) / 2) + originX) + (tileW / 2) - (sizeX / 2) + speedX;
   // var offY = (((posY * tileH) / 2) - ((posX * tileH) / 2) + originY) - (sizeY) + (tileH / 2) + speedY;
 
   posY = posY - (layerCoord * layerDepth);
 
-  var offX = posX + speedX;
-  var offY = posY + speedY;
+  var offX: f32 = posX + speedX;
+  var offY: f32 = posY + speedY;
 
   writeToExport(offX, offY, '#FFF');
 
-  var k = 0;
-  for(var y = offY; y < offY + sizeY; ++y){
-    for(var x = offX; x < offX + sizeX; ++x){
+  var k: u32 = 0;
+  for (var y = offY; y < offY + sizeY; ++y) {
+    for (var x = offX; x < offX + sizeX; ++x) {
 
-      if(thisSprite[k]){
+      if (thisSprite[k]) {
         writeToExport(x, y, thisSprite[k]);
       }
       k++;
@@ -187,17 +221,35 @@ function drawPlayer(posX, posY, layerCoord, thisSprite, sizeX, sizeY){
   player.y = offY;
 }
 
-function startGame(){
-  var selectedTiles = coordsToTile(player.x + player.sprite.originX, player.y + player.sprite.originY);
+interface TileCoordsInterface {
+  x: f32;
+  y: f32;
+}
+
+interface RGBInterface {
+  r: f32;
+  g: f32;
+  b: f32;
+}
+
+interface ColorSetInterface {
+  base: RGBInterface;
+  layers: RGBInterface[];
+  cool: RGBInterface;
+  warm: RGBInterface;
+}
+
+function startGame() {
+  var selectedTiles: TileCoordsInterface = coordsToTile(player.x + player.sprite.originX, player.y + player.sprite.originY);
 
   selectedTileX = selectedTiles.x;
   selectedTileY = selectedTiles.y;
 
   // Pre-render colors
-  for(var i = 0; i < map.length; ++i){
-    for(var j = 0; j < map[i].length; ++j){
-      if(map[i][j]){
-        var tileColorSet = colorSet(map[i][j].tile);
+  for (var i: u32 = 0; i < map.length; ++i) {
+    for (var j: u32 = 0; j < map[i].length; ++j) {
+      if (map[i][j]) {
+        var tileColorSet: ColorSetInterface = colorSet(map[i][j].tile);
         map[i][j].tile = {
           base: toColor(tileColorSet.layers[j]),
           warm: toColor(tileColorSet.warm),
@@ -205,13 +257,12 @@ function startGame(){
         };
 
         // Check for shadows
-        for(var k = j + 1; k < maxHeight; ++k){
-          if(map[i][k]){
+        for (var k = j + 1; k < maxHeight; ++k) {
+          if (map[i][k]) {
             map[i][j].tile.base = toColor(tileColorSet.cool);
             break;
           }
         }
-
       }
     }
   }
@@ -219,40 +270,36 @@ function startGame(){
   drawGame(map);
 };
 
-function animateMove(){
+function animateMove() {
 
-  if(keys.up){
+  if (keys.up) {
     speedY = -1;
-  }
-  else if(keys.down){
+  } else if (keys.down) {
     speedY = 1;
-  }
-  else{
+  } else {
     speedY = 0;
   }
 
-  if(keys.left){
+  if (keys.left) {
     speedX = -2;
-  }
-  else if(keys.right){
+  } else if (keys.right) {
     speedX = 2;
-  }
-  else{
+  } else {
     speedX = 0;
   }
 
-  var tileXY = coordsToTile(player.x + player.sprite.originX, player.y + player.sprite.originY);
+  var tileXY: TileCoordsInterface = coordsToTile(player.x + player.sprite.originX, player.y + player.sprite.originY);
   selectedTileX = tileXY.x;
   selectedTileY = tileXY.y;
 
   drawGame(map);
 }
 
-function toColor(colorObj){
+function toColor(colorObj: RGBInterface): string {
   return 'rgb(' + colorValLimit(colorObj.r) + ',' + colorValLimit(colorObj.g) + ',' + colorValLimit(colorObj.b) + ')';
 }
 
-function colorValLimit(color){
+function colorValLimit(color: u32): u32 {
   if(color >= 255){
     color = 255;
   }
@@ -264,7 +311,7 @@ function colorValLimit(color){
   return Math.round(color);
 }
 
-function colorSet(color){
+function colorSet(color: RGBInterface): ColorSetInterface {
   var colorCool = {
     r:color.r - 90,
     g:color.g - 20,
@@ -298,7 +345,7 @@ function colorSet(color){
   return colorObj;
 }
 
-function coordsToTile(x, y){
+function coordsToTile(x: u32, y: u32): TileCoordsInterface {
   var xCoord = (x - (tileW / 2) - originX);
   var yCoord = (y - (tileH / 2) - originY);
   var tileX = Math.round((xCoord / tileW) - (yCoord / tileH));
@@ -307,14 +354,14 @@ function coordsToTile(x, y){
   return {x: tileX, y: tileY};
 }
 
-function tileToCoords(x, y){
+function tileToCoords(x: u32, y: u32): TileCoordsInterface {
   var offX = (((x * tileW) / 2) + ((y * tileW) / 2) + originX) + (tileW / 2);
   var offY = (((y * tileH) / 2) - ((x * tileH) / 2) + originY) + (tileH / 2);
 
   return {x: offX, y: offY};
 }
 
-function writeToExport(x, y, color){
+function writeToExport(x: u32, y: u32, color: string) {
   const gamePixelWidth = 200;
   gameExport[(y * gamePixelWidth) + x] = color;
 }
